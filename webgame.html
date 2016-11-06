@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="http://pangbae.kr/webgame/webgame.js"></script>
+    <title>
+    앙 기모 후드 준수띄
+    </title>
+    <style>
+        canvas{
+            border: 1px dotted red;
+            background-color: #fcff00;   
+        }
+    </style>
+    <script>
+        alert("발사가능 횟수 5번");
+        alert("시작한지 5초안에 발사를 안하면 크롬창이 폭파됩니다");
+        
+        var canvas = document.getElementById("canvas")    
+        
+        var checkFire = 1;
+        
+        var context;
+        var velocity;
+        var angle;
+        var ballV;
+        
+        var ballVx;
+        var ballVy;
+        
+        var ballX=10;
+        var ballY=250;
+        
+        var goalY = 0;
+        var goalY2 = 100;
+        
+        var addGoalMove = 5;
+        var addGoalMove2= 5;
+        
+        var ballRadius=10;
+        var score=0;
+        
+        var image = new Image();
+        var backimage = new Image();
+        image.src="image.png";
+        backimage.src="backimage.png";
+        var timer;
+        
+        var checkTimer = 1;
+        
+        setInterval(goaldae,1);
+        
+        setInterval(checkTime,1000); 
+        
+        function checkTime(){
+           
+            checkTimer++;
+            if(checkTimer > 5){
+                alert("발사를 안해서 크롬창이 폭파됩니다");
+                alert("5");
+                alert("4");
+                alert("3");
+                alert("2");
+                alert("1");
+                alert("Fire~~~~~~~~~~~~~~~~");
+                
+                window.close();
+            }
+        }
+        
+        function drawball()//공 그리기
+        {
+            context.beginPath();
+            context.arc(ballX,ballY,ballRadius,0,2.0*Math.PI,true);
+            context.fillStyle="red";
+            context.fill();
+        }
+        
+        function drawBackground()//배경 그리기
+        {
+            context.drawImage(backimage,0,280);
+        }
+        function goaldae(){
+            draw();
+            context.drawImage(image,200,goalY);
+            context.drawImage(image,300,goalY2);
+            
+            
+            goalY += addGoalMove;
+            goalY2 += addGoalMove2;
+            
+            if(goalY < 0){
+                goalY = 0;
+                addGoalMove = 5;
+            }
+            
+            else if(goalY > 150){
+                goalY = 150;
+                addGoalMove = -5;
+            }
+            
+            if(goalY2 < 0){
+                goalY2 = 0;
+                addGoalMove2 = 5;
+            }
+            
+            else if(goalY2 > 150){
+                goalY2 = 150;
+                addGoalMove2 = -5;
+            }
+        }
+        
+       
+        function draw()//전체화면
+        {   
+            context.clearRect(0,0,500,300);
+            drawball();
+            
+            drawBackground();
+        }
+        
+        function init()
+        {
+            ballX=20;
+            ballY=250;
+            ballRadius=10;
+            context=document.getElementById('canvas').getContext('2d');
+            draw();
+        }        
+
+        function start()
+        {
+            clearInterval(checkTime);
+            checkTimer = -10000;
+            
+            
+            if(checkFire > 5){
+                alert("발사횟수를 다넘겨부렸다");
+            }
+            else{
+                init();
+                velocity=Number(document.getElementById("velocity").value);
+                angle = Number(document.getElementById("angle").value);
+                var angleR=angle*Math.PI/180;
+
+                ballVx=velocity*Math.cos(angleR);
+                ballVy=-velocity*Math.sin(angleR);
+
+                draw();
+                timer=setInterval(calculate,100);
+            }
+            checkFire++;
+            return false;
+        }
+        
+        function calculate()
+        {
+            ballVy=ballVy+1.98;
+            ballX=ballX+ballVx;
+            ballY=ballY+ballVy;
+            
+            if((ballX>=200)&&(ballX<=230)&&(ballY>=goalY)&&(ballY<=goalY+150))
+                {
+                    score++;
+                    document.getElementById("score").innerHTML="존수="+score;
+                    clearInterval(timer);
+                }
+            
+            if((ballX>=300)&&(ballX<=330)&&(ballY>=goalY2)&&(ballY<=goalY2+150))
+                {
+                    score++;
+                    document.getElementById("score").innerHTML="존수="+score;
+                    clearInterval(timer);
+                }
+            if(ballY>=300||ballY<0)
+                {
+                    clearInterval(timer);
+                }
+            
+            draw();
+            
+            
+            
+        }
+        
+        function goalMoce(){
+            
+            
+        }
+    </script>
+    </head>
+<body onload="init();">
+    <canvas id="canvas" width="500" height="300"></canvas>
+    <div id="control">
+        속도<input id="velocity" value="30" type="number" min="0" max="100" step="1"/>
+        각도<input id="angle" value="45" type="number" min="0" max="90" step="1"/>
+        <div id="score">점수 = 0</div>
+        <button onclick="start()">LUNCH</button>
+    
+    </div>
+    
+    
+    </body>
+</html>
